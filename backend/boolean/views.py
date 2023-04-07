@@ -10,6 +10,16 @@ from backend.urls import UserSerializer
 # Create your views here.
 class RegistrationView(APIView):
     permission_classes = [AllowAny]
+    def get(self, request):
+        message = {
+            "username": "string (required)",
+            "email": "string (required)",
+            "password": "string (required)",
+            "confirm_password": "string (required)",
+            "first_name": "string (optional)",
+            "last_name": "string (optional)"
+        }
+        return Response(message)
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
@@ -20,6 +30,12 @@ class RegistrationView(APIView):
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
+    def get(self, request):
+        message = {
+            "username": "string (required)",
+            "password": "string (required)",
+        }
+        return Response(message)
     def post(self, request):
         username = request.data.get('username')
         password = request.data.get('password')
