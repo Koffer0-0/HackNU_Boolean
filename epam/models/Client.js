@@ -7,6 +7,7 @@ const schema = new Schema({
     company_address: {type: String, required: true},
     phone_number: {type: String, required: true},
     // links: [{type: Types.ObjectId, ref: 'Link'}]
+    role: { type: String, default: 'client', required: true },
 })
 
 export const Client = model('Client', schema)

@@ -6,6 +6,7 @@ const schema = new Schema({
     second_name: {type: String, required: true},
     password: {type: String, required: true},
     // links: [{type: Types.ObjectId, ref: 'Link'}]
+    role: { type: String, default: 'operator', required: true },
 })
 
 export const Operator = model('Operator', schema)
