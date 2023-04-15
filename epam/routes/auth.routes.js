@@ -259,7 +259,7 @@ router.post('/create/groups', async (req, res) => {
 router.get('/specialists', async (req, res) => {
     try {
         const specialists = await Specialist.find();
-        res.status(200).json(specialists);
+        res.status(200).json({data: specialists});
     } catch (e) {
         console.error(e);
         res.status(500).json({ message: 'Error getting specialists' });
@@ -292,7 +292,7 @@ router.get('/clients', async (req, res) => {
 router.get('/requests', async (req, res) => {
     try {
         const requests = await Request.find();
-        res.status(200).json(requests);
+        res.status(200).json({data: requests});
     } catch (e) {
         console.error(e);
         res.status(500).json({ message: 'Error getting requests' });
@@ -303,7 +303,7 @@ router.get('/requests', async (req, res) => {
 router.get('/groups', async (req, res) => {
     try {
         const groups = await Group.find();
-        res.status(200).json(groups);
+        res.status(200).json({data: groups});
     } catch (e) {
         console.error(e);
         res.status(500).json({ message: 'Error getting groups' });
