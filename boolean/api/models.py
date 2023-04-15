@@ -23,39 +23,34 @@ class User(AbstractUser):
   )
 
 class Client(models.Model):
-    client = models.OneToOneField(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     address = models.CharField(max_length=200)
     phone_number = models.CharField(max_length=20)
-    email = models.EmailField(max_length=254)
 
     def __str__(self):
-        return self.client.username
+        return self.user.username
 
 class TechnicalSupportOperator(models.Model):
-    operator = models.OneToOneField(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=100)
     second_name = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.operator.username
+        return self.user.username
 
 class TechnicalSpecialistGroup(models.Model):
     name = models.CharField(max_length=100)
+
     def __str__(self):
         return self.name
 
 class TechnicalSpecialist(models.Model):
-    specialist = models.OneToOneField(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
-    username = models.CharField(max_length=20)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     group = models.ForeignKey(TechnicalSpecialistGroup, on_delete=models.CASCADE, related_name='specialists')
 
     def __str__(self):
-        return self.specialist.username
+        return self.user.username
 
 class Request(models.Model):
     description = models.TextField()

@@ -1,74 +1,75 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import Client
+from .models import Client, TechnicalSupportOperator, TechnicalSpecialist
 
 User = get_user_model()
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('id', 'username', 'email', 'password')
-        extra_kwargs = {'password': {'write_only': True}}
-class ClientLoginSerializer(serializers.Serializer):
-    username = serializers.CharField()
-    password = serializers.CharField()
-
-    def validate(self, data):
-        username = data.get('username')
-        password = data.get('password')
-
-        user = authenticate(username=username, password=password)
-        if user and user.is_client:
-            data['user'] = user
-        else:
-            raise serializers.ValidationError('Invalid username or password')
-
-        return data
-
-
-class OperatorLoginSerializer(serializers.Serializer):
-    username = serializers.CharField()
-    password = serializers.CharField()
-
-    def validate(self, data):
-        username = data.get('username')
-        password = data.get('password')
-
-        operator = authenticate(username=username, password=password)
-        if operator and operator.is_operator:
-            data['operator'] = operator
-        else:
-            raise serializers.ValidationError('Invalid username or password')
-
-        return data
+User = get_user_model()
 
 class ClientRegistrationSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
 
     class Meta:
         model = Client
-        fields = ('id', 'user', 'name', 'address', 'phone_number', 'email', 'password')
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = ('email', 'password', 'name', 'address', 'phone_number', 'user')
 
     def create(self, validated_data):
-        user_data = validated_data.pop('user')
-        user = User.objects.create_user(**user_data, is_client=True)
+        user = User.objects.create_user(
+            username=validated_data['email'],
+            email=validated_data['email'],
+            password=validated_data['password'],
+            is_client=True,
+        )
         client = Client.objects.create(user=user, **validated_data)
         return client
+    
+class OperatorRegistrationSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
 
-class SpecialistLoginSerializer(serializers.Serializer):
-    username = serializers.CharField()
+    class Meta:
+        model = TechnicalSupportOperator
+        fields = ('email', 'password', 'first_name', 'second_name', 'user')
+
+    def create(self, validated_data):
+        user = User.objects.create_user(
+            username=validated_data['email'],
+            email=validated_data['email'],
+            password=validated_data['password'],
+            is_operator=True,
+        )
+        operator = TechnicalSupportOperator.objects.create(user=user, **validated_data)
+        return operator
+
+class SpecialistRegistrationSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = TechnicalSpecialist
+        fields = ('email', 'password', 'group', 'user')
+
+    def create(self, validated_data):
+        user = User.objects.create_user(
+            username=validated_data['email'],
+            email=validated_data['email'],
+            password=validated_data['password'],
+            is_specialist=True,
+        )
+        specialist = TechnicalSpecialist.objects.create(user=user, **validated_data)
+        return specialist
+
+class UserLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
     password = serializers.CharField()
 
-    def validate(self, data):
-        username = data.get('username')
-        password = data.get('password')
-
-        specialist = authenticate(username=username, password=password)
-        if specialist and specialist.is_specialist:
-            data['specialist'] = specialist
-        else:
-            raise serializers.ValidationError('Invalid username or password')
-
-        return data
+    def validate(self, attrs):
+        user = authenticate(username=attrs['email'], password=attrs['password'])
+        if not user:
+            raise serializers.ValidationError("Invalid login credentials.")
+        return {'user': user}

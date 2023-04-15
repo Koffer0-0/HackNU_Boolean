@@ -3,32 +3,30 @@ from django.contrib.auth.backends import ModelBackend
 from api.models import Client, TechnicalSupportOperator, TechnicalSpecialist
 
 
-class ClientBackend(ModelBackend):
+class MultiModelBackend(ModelBackend):
     def authenticate(self, request, username=None, password=None, **kwargs):
+        # Check credentials against Client model
         try:
-            client = Client.objects.get(client__username=username)
+            client = Client.objects.get(email=username)
+            if client.password == password:
+                return client.client
         except Client.DoesNotExist:
-            return None
+            pass
 
-        if client.password == password:
-            return client.client
-
-class OperatorBackend(ModelBackend):
-    def authenticate(self, request, username=None, password=None, **kwargs):
+        # Check credentials against TechnicalSupportOperator model
         try:
-            operator = TechnicalSupportOperator.objects.get(operator__username=username)
+            operator = TechnicalSupportOperator.objects.get(first_name=username)
+            if operator.password == password:
+                return operator.operator
         except TechnicalSupportOperator.DoesNotExist:
-            return None
+            pass
 
-        if operator.password == password:
-            return operator.operator
-
-class SpecialistBackend(ModelBackend):
-    def authenticate(self, request, username=None, password=None, **kwargs):
+        # Check credentials against TechnicalSpecialist model
         try:
-            specialist = TechnicalSpecialist.objects.get(specialist__username=username)
+            specialist = TechnicalSpecialist.objects.get(username=username)
+            if specialist.password == password:
+                return specialist.specialist
         except TechnicalSpecialist.DoesNotExist:
-            return None
+            pass
 
-        if specialist.password == password:
-            return specialist.specialist
+        return None

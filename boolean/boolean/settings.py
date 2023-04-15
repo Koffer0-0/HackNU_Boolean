@@ -146,8 +146,6 @@ REST_FRAMEWORK = {
 }
 
 AUTHENTICATION_BACKENDS = [
-    'api.backends.ClientBackend',
-    'api.backends.OperatorBackend',
-    'api.backends.SpecialistBackend',
+    'api.backends.MultiModelBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
