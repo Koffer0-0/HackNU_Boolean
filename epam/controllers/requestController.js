@@ -1,8 +1,8 @@
 import { Request } from '../models/Request.js';
-
+// TODO upbrat populate
 export async function getAllActiveRequests(req, res) {
     try {
-        const requests = await Request.find({ status: 'active' }).populate('client operator');
+        const requests = await Request.find({ status: 'In Progress' })
         res.status(200).json(requests);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -11,7 +11,7 @@ export async function getAllActiveRequests(req, res) {
 
 export async function getAllClosedRequests(req, res) {
     try {
-        const requests = await Request.find({ status: 'closed' }).populate('client operator');
+        const requests = await Request.find({ status: 'Closed' })
         res.status(200).json(requests);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -20,7 +20,7 @@ export async function getAllClosedRequests(req, res) {
 
 export async function getAllNotStartedRequests(req, res) {
     try {
-        const requests = await Request.find({ status: 'not_started' }).populate('client');
+        const requests = await Request.find({ status: 'Not Started' })
         res.status(200).json(requests);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -30,7 +30,7 @@ export async function getAllNotStartedRequests(req, res) {
 export async function getAllClosedOperatorRequests(req, res) {
     try {
         const { operatorId } = req.params;
-        const requests = await Request.find({ status: 'closed', operator: operatorId }).populate('client');
+        const requests = await Request.find({ status: 'closed', operator: operatorId })
         res.status(200).json(requests);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -40,7 +40,7 @@ export async function getAllClosedOperatorRequests(req, res) {
 export async function getAllActiveOperatorRequests(req, res) {
     try {
         const { operatorId } = req.params;
-        const requests = await Request.find({ status: 'active', operator: operatorId }).populate('client');
+        const requests = await Request.find({ status: 'active', operator: operatorId })
         res.status(200).json(requests);
     } catch (error) {
         res.status(500).json({ message: error.message });

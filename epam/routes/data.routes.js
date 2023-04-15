@@ -25,7 +25,7 @@ router.post('/create/requests', async (req, res) => {
         if (candidate) {
             return res.status(400).json({ message: 'Request already exists' });
         }
-        const request = new Request({ name, description, client, group, operator, status: 'New'});
+        const request = new Request({ name, description, client, group, operator, status: 'Not started'});
         const savedRequest = await request.save();
         res.status(201).json({data: savedRequest});
     } catch (e) {
@@ -33,6 +33,7 @@ router.post('/create/requests', async (req, res) => {
         res.status(500).json({ message: 'Error creating request' });
     }
 });
+
 router.put('/requests/:requestId/close', async (req, res) => {
     try {
         const { requestId } = req.params;

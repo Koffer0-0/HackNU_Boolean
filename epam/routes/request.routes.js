@@ -1,3 +1,5 @@
+import { Router } from 'express';
+
 import {
     getAllActiveRequests,
     getAllClosedRequests,
@@ -6,8 +8,7 @@ import {
     getAllActiveOperatorRequests,
     assignRequestToOperator,
 } from '../controllers/requestController.js';
-
-const router = express.Router();
+const router = Router()
 
 router.get('/active', getAllActiveRequests);
 router.get('/closed', getAllClosedRequests);
@@ -16,4 +17,4 @@ router.get('/operator/:operatorId/closed', getAllClosedOperatorRequests);
 router.get('/operator/:operatorId/active', getAllActiveOperatorRequests);
 router.post('/assign/:requestId', assignRequestToOperator);
 
-export default router;
+export const requestRoutes = router
