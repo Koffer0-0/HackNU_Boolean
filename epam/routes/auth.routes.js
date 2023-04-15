@@ -281,7 +281,7 @@ router.get('/operators', async (req, res) => {
 router.get('/clients', async (req, res) => {
     try {
         const clients = await Client.find();
-        res.status(200).json(clients);
+        res.status(200).json({data: clients});
     } catch (e) {
         console.error(e);
         res.status(500).json({ message: 'Error getting clients' });
