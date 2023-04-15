@@ -1,65 +1,52 @@
-from django.contrib.auth import authenticate, get_user_model
-from django.db import transaction
-from rest_framework import generics, permissions, status
+from rest_framework import permissions
+from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
-from api.models import Client, TechnicalSpecialist, TechnicalSupportOperator, TechnicalSpecialistGroup
-from api.permissions import IsTechnicalSupportOperator
-from api.serializers import ClientSerializer, TechnicalSpecialistSerializer, TechnicalSupportOperatorSerializer, \
-    ClientLoginSerializer, TechnicalSpecialistLoginSerializer, TechnicalSupportOperatorLoginSerializer, \
-    TechnicalSpecialistGroupSerializer
+from rest_framework.views import APIView
+
+from api.serializers import ClientLoginSerializer, OperatorLoginSerializer, SpecialistLoginSerializer, \
+    ClientRegistrationSerializer
 
 
-class LoginView(generics.GenericAPIView):
+class ClientLoginAPIView(APIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = ClientLoginSerializer
 
-    def get_serializer_class(self):
-        user = self.request.user
-        if isinstance(user, Client):
-            return ClientLoginSerializer
-        elif isinstance(user, TechnicalSpecialist):
-            return TechnicalSpecialistLoginSerializer
-        elif isinstance(user, TechnicalSupportOperator):
-            return TechnicalSupportOperatorLoginSerializer
-        return super().get_serializer_class()
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({'token': token.key, 'user_id': user.id})
 
-    def post(self, request):
-        email_or_username = request.data.get('email_or_username')
-        password = request.data.get('password')
-
-        User = get_user_model()
-
-        try:
-            user = User.objects.get(email=email_or_username)
-        except User.DoesNotExist:
-            try:
-                user = User.objects.get(username=email_or_username)
-            except User.DoesNotExist:
-                return Response({'error': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
-
-        user = authenticate(request, username=user.username, password=password)
-        if user is not None:
-            serializer_class = self.get_serializer_class()
-            return Response(serializer_class(user).data)
-        else:
-            return Response({'error': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
-
-class ClientRegistration(generics.CreateAPIView):
-    queryset = Client.objects.all()
-    serializer_class = ClientSerializer
+class ClientRegistrationAPIView(APIView):
     permission_classes = [permissions.AllowAny]
+    serializer_class = ClientRegistrationSerializer
 
-class TechnicalSpecialistRegistration(generics.CreateAPIView):
-    queryset = TechnicalSpecialist.objects.all()
-    serializer_class = TechnicalSpecialistSerializer
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        client = serializer.save()
+        return Response({'id': client.id, 'message': 'Registration successful'})
+
+class OperatorLoginAPIView(APIView):
     permission_classes = [permissions.AllowAny]
+    serializer_class = OperatorLoginSerializer
 
-class TechnicalSpecialistGroupRegistration(generics.CreateAPIView):
-    queryset = TechnicalSpecialist.objects.all()
-    serializer_class = TechnicalSpecialistGroupSerializer
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        operator = serializer.validated_data['operator']
+        token, created = Token.objects.get_or_create(user=operator)
+        return Response({'token': token.key, 'operator_id': operator.id})
+
+
+class SpecialistLoginAPIView(APIView):
     permission_classes = [permissions.AllowAny]
+    serializer_class = SpecialistLoginSerializer
 
-class TechnicalSupportOperatorRegistration(generics.CreateAPIView):
-    queryset = TechnicalSupportOperator.objects.all()
-    serializer_class = TechnicalSupportOperatorSerializer
-    permission_classes = [IsTechnicalSupportOperator]
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        specialist = serializer.validated_data['specialist']
+        token, created = Token.objects.get_or_create(user=specialist)
+        return Response({'token': token.key, 'specialist_id': specialist.id})

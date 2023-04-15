@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'api',
     'rest_framework',
     'corsheaders',
-    'knox'
+    'knox',
+    'rest_auth'
 ]
 
 MIDDLEWARE = [
@@ -88,7 +89,7 @@ DATABASES = {
         'NAME': 'postgres',
         'USER': 'postgres',
         'PASSWORD': 'BooleanTeam300',
-        'HOST': 'db.gfyhziskrmnxyfkhmjos.supabase.co',
+        'HOST': 'db.kofnoyeoxgjjdccofxjz.supabase.co',
         'PORT': '5432',
     }
 }
@@ -143,3 +144,10 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
 }
+
+AUTHENTICATION_BACKENDS = [
+    'api.backends.ClientBackend',
+    'api.backends.OperatorBackend',
+    'api.backends.SpecialistBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
