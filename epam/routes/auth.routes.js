@@ -254,27 +254,6 @@ router.post('/create/groups', async (req, res) => {
         res.status(500).json({ message: 'Error creating group' });
     }
 });
-router.post('/create/requests', async (req, res) => {
-    try {
-        const { name, description, client, group } = req.body;
-        const request = new Request({ name, description, client, group });
-        const savedRequest = await request.save();
-        res.status(201).json(savedRequest);
-    } catch (e) {
-        console.error(e);
-        res.status(500).json({ message: 'Error creating request' });
-    }
-});
-
-router.get('/models', (req, res) => {
-    try {
-        const models = mongoose.modelNames();
-        res.status(200).json(models);
-    } catch (e) {
-        console.error(e);
-        res.status(500).json({ message: 'Error getting models' });
-    }
-});
 
 // Get all specialists
 router.get('/specialists', async (req, res) => {

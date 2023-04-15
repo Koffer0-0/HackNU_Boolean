@@ -6,6 +6,7 @@ import {Request} from "../models/Request.js";
 import {Group} from "../models/Group.js";
 
 const router = Router()
+
 router.post('/create/groups', async (req, res) => {
     try {
         const { name, specialists } = req.body;
@@ -19,13 +20,53 @@ router.post('/create/groups', async (req, res) => {
 });
 router.post('/create/requests', async (req, res) => {
     try {
-        const { name, description, client, group } = req.body;
-        const request = new Request({ name, description, client, group });
+        const { name, description, client, group, operator } = req.body;
+        const candidate = await Request.findOne({ name });
+        if (candidate) {
+            return res.status(400).json({ message: 'Request already exists' });
+        }
+        const request = new Request({ name, description, client, group, operator, status: 'New'});
         const savedRequest = await request.save();
-        res.status(201).json(savedRequest);
+        res.status(201).json({data: savedRequest});
     } catch (e) {
         console.error(e);
         res.status(500).json({ message: 'Error creating request' });
+    }
+});
+router.put('/requests/:requestId/close', async (req, res) => {
+    try {
+        const { requestId } = req.params;
+        const request = await Request.findByIdAndUpdate(
+            requestId,
+            { status: 'closed' },
+            { new: true }
+        );
+        res.status(200).json(request);
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ message: 'Error closing request' });
+    }
+});
+
+router.put('/requests/:requestId/start', async (req, res) => {
+    try {
+        const { requestId } = req.params;
+        const request = await Request.findById(requestId);
+        if (!request) {
+            return res.status(404).json({ message: 'Request not found' });
+        }
+        if (request.status === 'closed') {
+            request.status = 'in-progress';
+            await request.save();
+            res.status(200).json(request);
+        } else if (request.status === 'in-progress') {
+            return res.status(400).json({ message: 'Request already in progress' });
+        } else {
+            return res.status(400).json({ message: 'Invalid request status' });
+        }
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ message: 'Error updating request' });
     }
 });
 
@@ -63,7 +104,7 @@ router.get('/clients', async (req, res) => {
 });
 
 // Get all requests
-router.get('/requests', async (req, res) => {
+router.get('/requestlist', async (req, res) => {
     try {
         const requests = await Request.find();
         res.status(200).json(requests);

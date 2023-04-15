@@ -8,4 +8,4 @@ const schema = new Schema({
     // links: [{type: Types.ObjectId, ref: 'Link'}]
 })
 
-export const Operator = model('Operator', scahema)
+export const Operator = model('Operator', schema)

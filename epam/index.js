@@ -3,6 +3,7 @@ import config from 'config'
 import cors from 'cors'
 import {authRouter} from './routes/auth.routes.js'
 import {dataRouter} from './routes/data.routes.js'
+// import {requestRoutes} from './routes/request.routes.js';
 import * as bodyParser from "express";
 import mongoose from "mongoose";
 
@@ -12,6 +13,7 @@ app.use(cors())
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(express.json({extended: true}))
 
+// app.use('/api/requests', requestRoutes);
 app.use('/api/auth', authRouter)
 app.use('/api/data', dataRouter)
 const PORT = config.get('port') || 5000
