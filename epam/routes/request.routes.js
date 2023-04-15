@@ -1,5 +1,4 @@
 import { Router } from 'express';
-
 import {
     getAllActiveRequests,
     getAllClosedRequests,
@@ -16,5 +15,6 @@ router.get('/not-started', getAllNotStartedRequests);
 router.get('/operator/:operatorId/closed', getAllClosedOperatorRequests);
 router.get('/operator/:operatorId/active', getAllActiveOperatorRequests);
 router.post('/assign/:requestId', assignRequestToOperator);
+
 
 export const requestRoutes = router
