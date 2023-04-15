@@ -78,6 +78,7 @@ router.post(
             const responseData = {
                 id: client.id,
                 email: client.email,
+                role: 'client',
             }
 
             const token = jwt.sign(responseData, config.get('jwtSecret'), {expiresIn: '1h'})
