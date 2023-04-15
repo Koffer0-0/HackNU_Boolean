@@ -75,7 +75,7 @@ router.put('/requests/:requestId/start', async (req, res) => {
 router.get('/specialists', async (req, res) => {
     try {
         const specialists = await Specialist.find();
-        res.status(200).json(specialists);
+        res.status(200).json({data: specialists});
     } catch (e) {
         console.error(e);
         res.status(500).json({ message: 'Error getting specialists' });
@@ -86,7 +86,7 @@ router.get('/specialists', async (req, res) => {
 router.get('/operators', async (req, res) => {
     try {
         const operators = await Operator.find();
-        res.status(200).json(operators);
+        res.status(200).json({ data: operators});
     } catch (e) {
         console.error(e);
         res.status(500).json({ message: 'Error getting operators' });
@@ -97,7 +97,7 @@ router.get('/operators', async (req, res) => {
 router.get('/clients', async (req, res) => {
     try {
         const clients = await Client.find();
-        res.status(200).json(clients);
+        res.status(200).json({data: clients});
     } catch (e) {
         console.error(e);
         res.status(500).json({ message: 'Error getting clients' });
@@ -105,7 +105,8 @@ router.get('/clients', async (req, res) => {
 });
 
 // Get all requests
-router.get('/requestlist', async (req, res) => {
+router.get('/', async (req, res) => {
+    hasRole(req, res, 'client')
     try {
         const requests = await Request.find();
         res.status(200).json(requests);
