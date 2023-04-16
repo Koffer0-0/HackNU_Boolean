@@ -4,8 +4,8 @@ import {clientMarkRequestAsCompleted, getAllClients, getClient, getRequests} fro
 const router = Router()
 
 router.get('/', getAllClients);
+router.put('/client/complete-request/:requestId', clientMarkRequestAsCompleted);
 router.get('/:clientId', getClient);
 router.get('/:clientId/requests', getRequests);
-router.put('/client/complete-request/:requestId', clientMarkRequestAsCompleted);
 
 export const clientRoutes = router

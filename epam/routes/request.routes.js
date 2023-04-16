@@ -13,12 +13,12 @@ router.get('/', getAllRequests);
 router.get('/active', getAllActiveRequests);
 router.get('/closed', getAllClosedRequests);
 router.get('/waiting', getAllNotStartedRequests);
+router.post('/create', createRequest);
 router.get('/:requestId', getRequestById);
 router.put('/:requestId/close', closeRequestById);
 router.put('/:requestId/active', startRequestById);
 router.get('/operator/:operatorId/closed', getAllClosedOperatorRequests);
 router.get('/operator/:operatorId/active', getAllActiveOperatorRequests);
-router.post('/create', createRequest);
 router.post('/assign/:requestId', assignRequestToOperator);
 
 export const requestRoutes = router

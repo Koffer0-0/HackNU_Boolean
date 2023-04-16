@@ -4,7 +4,7 @@ import {createSpecialist, getAllSpecialists, getSpecialist} from "../controllers
 const router = Router()
 
 router.get('/', getAllSpecialists);
-router.get('/:id', getSpecialist);
 router.post('/create', createSpecialist);
+router.get('/:id', getSpecialist);
 
 export const specialistRoutes = router
