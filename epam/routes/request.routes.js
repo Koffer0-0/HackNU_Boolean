@@ -4,13 +4,13 @@ import {
     closeRequestById, createRequest, getAllActiveOperatorRequests,
     getAllActiveRequests, getAllClosedOperatorRequests,
     getAllClosedRequests, getAllNotStartedRequests,
-    getAllRequests, startRequestById
+    getAllRequests, getRequestById, startRequestById
 } from "../controllers/requestController.js";
 
 const router = Router()
 
 router.get('/', getAllRequests);
-router.get('/:id', getAllRequests);
+router.get('/:requestId', getRequestById);
 router.get('/active', getAllActiveRequests);
 router.get('/closed', getAllClosedRequests);
 router.put('/:requestId/close', closeRequestById);

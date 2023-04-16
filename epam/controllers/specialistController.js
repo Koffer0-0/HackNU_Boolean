@@ -33,14 +33,19 @@ export async function createSpecialist(req, res) {
         const savedSpecialist = await specialist.save();
 
         const transporter = nodemailer.createTransport({
-            service: 'gmail',
+            host: 'smtp.mail.ru',
+            port: 465 ,
+            secure: true,
             auth: {
-                user: config.get('email'),
-                pass: config.get('password')
+                user: 'koffer0_0@mail.ru', // replace with your ProtonMail email address
+                pass: 'a0szFRxzmvvzwtnfgKK3' // replace with your ProtonMail password or application-specific password
+            },
+            tls: {
+                ciphers:'SSLv3'
             }
-        })
+        });
         const mailOptions = {
-            from: config.get('email'),
+            from: 'koffer0_0@mail.ru',
             to: email,
             subject: 'Now you can visit our website',
             text: 'Login: ' + email + ' Password: ' + password

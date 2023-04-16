@@ -16,8 +16,8 @@ export async function getAllOperators(req, res) {
 
 export async function getOperator(req, res) {
     try {
-        const id = req.params.id;
-        const operator = await Operator.findById(id);
+        const operatorId = req.params.id;
+        const operator = await Operator.findById(operatorId);
         res.status(200).json({ data: operator});
     } catch (e) {
         console.error(e);
@@ -25,6 +25,28 @@ export async function getOperator(req, res) {
     }
 }
 
+// 12) Obtain a list of all the operator's closed applications
+export async function getOperatorClosedApplications(req, res) {
+    try {
+        const operatorId = req.params.operatorId;
+        const requests = await Request.find({ operator: operatorId, status: 'completed' });
+        res.status(200).json(requests);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+// 13) Obtain a list of all active operator's requests
+export async function getOperatorActiveRequests(req, res) {
+    try {
+        const operatorId = req.params.operatorId;
+        const requests = await Request.find({ operator: operatorId, status: 'active' });
+        res.status(200).json(requests);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+// email sender/verification
 export async function createOperator(req, res) {
     try {
         const { email, first_name, second_name } = req.body;

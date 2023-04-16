@@ -1,4 +1,5 @@
 import {Request} from '../models/Request.js';
+import {Operator} from "../models/Operator.js";
 
 export async function getAllRequests(req, res) {
     try {
@@ -9,6 +10,17 @@ export async function getAllRequests(req, res) {
         res.status(500).json({ message: 'Error getting requests' });
     }
 }
+export async function getRequestById(req, res) {
+    try {
+        const requestId = req.params.id;
+        const request = await Operator.findById(requestId);
+        res.status(200).json({ data: request});
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ message: 'Error getting operators' });
+    }
+}
+
 export async function createRequest(req, res) {
     try {
         const { name, description, client, group, operator } = req.body;
@@ -124,5 +136,68 @@ export async function startRequestById(req,res) {
     } catch (e) {
         console.error(e);
         res.status(500).json({ message: 'Error updating request' });
+    }
+}
+
+// 14) Operator redirects request to brigade
+export async function operatorRedirectRequestToBrigade(req, res) {
+    try {
+        const { requestId, brigadeId } = req.body;
+        const request = await Request.findByIdAndUpdate(
+            requestId,
+            { group: brigadeId },
+            { new: true }
+        );
+        res.status(200).json(request);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+// 18) The brigade accepts the request and transfers its status to "In progress"
+export async function brigadeAcceptRequest(req, res) {
+    try {
+        const requestId = req.params.requestId;
+        const request = await Request.findByIdAndUpdate(
+            requestId,
+            { status: 'active' },
+            { new: true }
+        );
+        res.status(200).json(request);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+// 19) The team marks the request as completed
+export async function teamMarkRequestAsCompleted(req, res) {
+    try {
+        const requestId = req.params.requestId;
+        const request = await Request.findByIdAndUpdate(
+            requestId,
+            { groupCompleted: true },
+            { new: true }
+        );
+        res.status(200).json(request);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+// 21) The operator marks the request as completed
+export async function operatorMarkRequestAsCompleted(req, res) {
+    try {
+        const requestId = req.params.requestId;
+        const request = await Request.findById(requestId);
+
+        if (!request.clientCompleted || !request.groupCompleted) {
+            return res.status(400).json({ message: 'The client and team must mark the request as completed first' });
+        }
+
+        const updatedRequest = await Request.findByIdAndUpdate(
+            requestId,
+            { status: 'completed' },
+            { new: true }
+        );
+        res.status(200).json(updatedRequest);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 }

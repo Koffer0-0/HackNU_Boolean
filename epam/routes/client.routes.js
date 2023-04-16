@@ -1,10 +1,11 @@
 import {Router} from 'express';
-import {getAllClients, getClient, getRequests} from "../controllers/clientController.js";
+import {clientMarkRequestAsCompleted, getAllClients, getClient, getRequests} from "../controllers/clientController.js";
 
 const router = Router()
 
 router.get('/', getAllClients);
-router.get('/:id', getClient);
-router.get('/:id/requests', getRequests);
+router.get('/:clientId', getClient);
+router.get('/:clientId/requests', getRequests);
+router.put('/client/complete-request/:requestId', clientMarkRequestAsCompleted);
 
 export const clientRoutes = router

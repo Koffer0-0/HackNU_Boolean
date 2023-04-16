@@ -1,10 +1,17 @@
 import {Router} from 'express';
-import {createGroup, getAllGroups, getGroup} from "../controllers/groupController.js";
+import {
+    createGroup,
+    getActiveGroupRequests,
+    getAllGroups,
+    getClosedGroupRequests,
+    getGroup
+} from "../controllers/groupController.js";
 
 const router = Router()
 
 router.get('/', getAllGroups);
-router.get('/:id', getGroup);
-router.post('/create', createGroup);
+router.get('/:groupId', getGroup);
+router.get('/:groupId/closed-requests', getClosedGroupRequests);
+router.get('/:groupId/active-requests', getActiveGroupRequests);
 
 export const groupRoutes = router
