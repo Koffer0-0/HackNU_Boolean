@@ -82,10 +82,11 @@ export async function getAllActiveOperatorRequests(req, res) {
     }
 }
 
-export async function assignRequestToOperator(req,res) {
+export async function assignRequestToOperator(req, res) {
     try {
-        const { requestId } = req.params;
-        const { operatorId } = req.body;
+        const { requestId, operatorId } = req.params;
+
+        // Use findOne instead of find and use an object for the query
         const request = await Request.findById(requestId);
 
         if (!request) {
@@ -96,7 +97,7 @@ export async function assignRequestToOperator(req,res) {
         request.status = 'In progress';
 
         const updatedRequest = await request.save();
-        res.status(200).json({data: updatedRequest});
+        res.status(200).json({ data: updatedRequest });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
