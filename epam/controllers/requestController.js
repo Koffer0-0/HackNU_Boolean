@@ -28,7 +28,7 @@ export async function createRequest(req, res) {
         if (candidate) {
             return res.status(400).json({ message: 'Request already exists' });
         }
-        const request = new Request({ name, description, client, group, operator, status: 'Not started'});
+        const request = new Request({ name, description, client, group, operator, status: 'Waiting'});
         const savedRequest = await request.save();
         res.status(201).json({data: savedRequest});
     } catch (e) {
