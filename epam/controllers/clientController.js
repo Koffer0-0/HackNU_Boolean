@@ -13,20 +13,21 @@ export async function getAllClients(req, res) {
 
 export async function getClient(req, res) {
     try {
-        const id = req.params.id;
-        const client = await Client.findById(id);
+        const clientId = req.params;
+        const client = await Client.findById(clientId);
         res.status(200).json({data: client});
     } catch (e) {
         console.error(e);
         res.status(500).json({ message: 'Error getting clients' });
     }
 }
+
 //gets all the requests of a client
 export async function getRequests(req, res) {
     try {
-        const id = req.params.id;
-        const client = await Client.findById(id);
-        const requests = await Request.find({client: client._id});
+        const {clientId} = req.params;
+        const client = await Client.findById(clientId);
+        const requests = await Request.find({client: client.clientId});
         res.status(200).json({data: requests});
     } catch (e) {
         console.error(e);
@@ -37,7 +38,7 @@ export async function getRequests(req, res) {
 // 20) The client marks the request as completed
 export async function clientMarkRequestAsCompleted(req, res) {
     try {
-        const requestId = req.params.requestId;
+        const requestId = req.params;
         const request = await Request.findByIdAndUpdate(
             requestId,
             { clientCompleted: true },

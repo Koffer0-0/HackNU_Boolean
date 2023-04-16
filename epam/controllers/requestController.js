@@ -12,7 +12,7 @@ export async function getAllRequests(req, res) {
 }
 export async function getRequestById(req, res) {
     try {
-        const requestId = req.params.id;
+        const requestId = req.params;
         const request = await Operator.findById(requestId);
         res.status(200).json({ data: request});
     } catch (e) {
@@ -56,7 +56,7 @@ export async function getAllClosedRequests(req, res) {
 
 export async function getAllNotStartedRequests(req, res) {
     try {
-        const requests = await Request.find({ status: 'Not Started' })
+        const requests = await Request.find({ status: 'Waiting' })
         res.status(200).json({ data: requests});
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -66,7 +66,7 @@ export async function getAllNotStartedRequests(req, res) {
 export async function getAllClosedOperatorRequests(req, res) {
     try {
         const { operatorId } = req.params;
-        const requests = await Request.find({ status: 'closed', operator: operatorId })
+        const requests = await Request.find({ status: 'Closed', operator: operatorId })
         res.status(200).json({data: requests});
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -76,7 +76,7 @@ export async function getAllClosedOperatorRequests(req, res) {
 export async function getAllActiveOperatorRequests(req, res) {
     try {
         const { operatorId } = req.params;
-        const requests = await Request.find({ status: 'active', operator: operatorId })
+        const requests = await Request.find({ status: 'In progress', operator: operatorId })
         res.status(200).json({data: requests});
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -94,7 +94,7 @@ export async function assignRequestToOperator(req,res) {
         }
 
         request.operator = operatorId;
-        request.status = 'active';
+        request.status = 'In progress';
 
         const updatedRequest = await request.save();
         res.status(200).json({data: updatedRequest});
@@ -108,7 +108,7 @@ export async function closeRequestById(req,res) {
         const { requestId } = req.params;
         const request = await Request.findByIdAndUpdate(
             requestId,
-            { status: 'closed' }
+            { status: 'Closed' }
         );
         res.status(200).json({data: request});
     } catch (e) {
@@ -124,11 +124,11 @@ export async function startRequestById(req,res) {
         if (!request) {
             return res.status(404).json({ message: 'Request not found' });
         }
-        if (request.status === 'closed') {
-            request.status = 'in-progress';
+        if (request.status === 'Closed') {
+            request.status = 'In progress';
             await request.save();
             return res.status(200).json({data: request});
-        } else if (request.status === 'in-progress') {
+        } else if (request.status === 'In progress') {
             return res.status(400).json({ message: 'Request already in progress' });
         } else {
             return res.status(400).json({ message: 'Invalid request status' });
@@ -156,10 +156,10 @@ export async function operatorRedirectRequestToBrigade(req, res) {
 // 18) The brigade accepts the request and transfers its status to "In progress"
 export async function brigadeAcceptRequest(req, res) {
     try {
-        const requestId = req.params.requestId;
+        const requestId = req.params;
         const request = await Request.findByIdAndUpdate(
             requestId,
-            { status: 'active' },
+            { status: 'In progress' },
             { new: true }
         );
         res.status(200).json(request);
@@ -170,7 +170,7 @@ export async function brigadeAcceptRequest(req, res) {
 // 19) The team marks the request as completed
 export async function teamMarkRequestAsCompleted(req, res) {
     try {
-        const requestId = req.params.requestId;
+        const requestId = req.params;
         const request = await Request.findByIdAndUpdate(
             requestId,
             { groupCompleted: true },
@@ -184,7 +184,7 @@ export async function teamMarkRequestAsCompleted(req, res) {
 // 21) The operator marks the request as completed
 export async function operatorMarkRequestAsCompleted(req, res) {
     try {
-        const requestId = req.params.requestId;
+        const requestId = req.params;
         const request = await Request.findById(requestId);
 
         if (!request.clientCompleted || !request.groupCompleted) {
@@ -193,7 +193,7 @@ export async function operatorMarkRequestAsCompleted(req, res) {
 
         const updatedRequest = await Request.findByIdAndUpdate(
             requestId,
-            { status: 'completed' },
+            { status: 'Closed' },
             { new: true }
         );
         res.status(200).json(updatedRequest);

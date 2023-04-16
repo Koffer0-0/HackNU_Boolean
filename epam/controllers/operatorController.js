@@ -16,7 +16,7 @@ export async function getAllOperators(req, res) {
 
 export async function getOperator(req, res) {
     try {
-        const operatorId = req.params.id;
+        const operatorId = req.params;
         const operator = await Operator.findById(operatorId);
         res.status(200).json({ data: operator});
     } catch (e) {
@@ -28,7 +28,7 @@ export async function getOperator(req, res) {
 // 12) Obtain a list of all the operator's closed applications
 export async function getOperatorClosedApplications(req, res) {
     try {
-        const operatorId = req.params.operatorId;
+        const operatorId = req.params;
         const requests = await Request.find({ operator: operatorId, status: 'completed' });
         res.status(200).json(requests);
     } catch (error) {
@@ -39,8 +39,8 @@ export async function getOperatorClosedApplications(req, res) {
 // 13) Obtain a list of all active operator's requests
 export async function getOperatorActiveRequests(req, res) {
     try {
-        const operatorId = req.params.operatorId;
-        const requests = await Request.find({ operator: operatorId, status: 'active' });
+        const operatorId = req.params;
+        const requests = await Request.find({ operator: operatorId, status: 'In progress' });
         res.status(200).json(requests);
     } catch (error) {
         res.status(500).json({ message: error.message });

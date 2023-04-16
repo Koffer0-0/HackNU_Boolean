@@ -14,7 +14,7 @@ export async function getAllGroups(req, res) {
 
 export async function getGroup(req, res) {
     try {
-        const groupId = req.params.id;
+        const groupId = req.params;
         const group = await Group.findById(groupId);
         res.status(200).json({data: group});
     } catch (e) {
@@ -38,8 +38,8 @@ export async function createGroup(req, res) {
 // 16) Get the list of all closed applications of the brigade
 export async function getClosedGroupRequests(req, res) {
     try {
-        const groupId = req.params.groupId;
-        const requests = await Request.find({ group: groupId, status: 'completed' });
+        const groupId = req.params;
+        const requests = await Request.find({ group: groupId, status: 'Closed' });
         res.status(200).json(requests);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -49,8 +49,8 @@ export async function getClosedGroupRequests(req, res) {
 // 17) Get the list of all active applications of the brigade
 export async function getActiveGroupRequests(req, res) {
     try {
-        const groupId = req.params.groupId;
-        const requests = await Request.find({ group: groupId, status: 'active' });
+        const groupId = req.params;
+        const requests = await Request.find({ group: groupId, status: 'In progress' });
         res.status(200).json(requests);
     } catch (error) {
         res.status(500).json({ message: error.message });

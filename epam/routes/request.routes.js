@@ -14,11 +14,11 @@ router.get('/:requestId', getRequestById);
 router.get('/active', getAllActiveRequests);
 router.get('/closed', getAllClosedRequests);
 router.put('/:requestId/close', closeRequestById);
-router.put('/:requestId/start', startRequestById);
+router.put('/:requestId/active', startRequestById);
 router.get('/not-started', getAllNotStartedRequests);
 router.get('/operator/:operatorId/closed', getAllClosedOperatorRequests);
 router.get('/operator/:operatorId/active', getAllActiveOperatorRequests);
 router.post('/create', createRequest);
 router.post('/assign/:requestId', assignRequestToOperator);
 
-export const requestRoutes = router
+export const requestRoutes = routerS

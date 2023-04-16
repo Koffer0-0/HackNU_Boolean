@@ -15,7 +15,7 @@ export async function getAllSpecialists(req, res) {
 
 export async function getSpecialist(req, res) {
     try {
-        const id = req.params.id;
+        const id = req.params;
         const specialist = await Specialist.findById(id);
         res.status(200).json({data: specialist});
     } catch (e) {
