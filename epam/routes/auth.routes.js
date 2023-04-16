@@ -6,11 +6,54 @@ import {check, validationResult} from 'express-validator'
 import {Client} from "../models/Client.js";
 import {Operator} from "../models/Operator.js";
 import {Specialist} from "../models/Specialist.js";
-import {Request} from "../models/Request.js";
-import {Group} from "../models/Group.js";
+import {decodeToken} from "../helpers/decodeToken.js";
+import {findUserByEmail} from "../helpers/findUserByEmail.js";
 // import supabase from "../supabase.js";
 
 const router = Router()
+router.post(
+    '/login',
+    [
+        check('email', 'Please, enter correct email').normalizeEmail().isEmail(),
+        check('password', 'Enter password').exists(),
+    ],
+    async (req, res) => {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({
+                    errors: errors.array(),
+                    message: 'Incorrect data to login',
+                });
+            }
+
+            const { email, password } = req.body;
+
+            const result = await findUserByEmail(email);
+            if (!result) {
+                return res.status(400).json({ message: 'User not found' });
+            }
+
+            const { user, role } = result;
+
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) {
+                return res.status(400).json({ message: 'Incorrect password. Try again.' });
+            }
+
+            const responseData = {
+                id: user.id,
+                email: user.email,
+                role,
+            };
+
+            const token = jwt.sign(responseData, config.get('jwtSecret'), { expiresIn: '1h' });
+            res.json({ data: token });
+        } catch (e) {
+            res.status(500).json({ message: `Error in auth.routes. ${e.message}` });
+        }
+    }
+);
 
 // /api/auth/signup
 router.post(
@@ -35,6 +78,16 @@ router.post(
             const candidate = await Client.findOne({email})
             if (candidate) {
                 return res.status(400).json('Client with this email already exists.')
+            }
+
+            // Additional checks
+            const operatorCandidate = await Operator.findOne({ email });
+            if (operatorCandidate) {
+                return res.status(400).json('Email already exists in Operator.');
+            }
+            const specialistCandidate = await Specialist.findOne({ email });
+            if (specialistCandidate) {
+                return res.status(400).json('Email already exists in Specialist.');
             }
 
             const hashedPassword = await bcrypt.hash(password, 12)
@@ -115,6 +168,16 @@ router.post(
                 return res.status(400).json('Operator with this email already exists.')
             }
 
+            // Additional checks
+            const clientCandidate = await Client.findOne({ email });
+            if (clientCandidate) {
+                return res.status(400).json('Email already exists in Client.');
+            }
+            const specialistCandidate = await Specialist.findOne({ email });
+            if (specialistCandidate) {
+                return res.status(400).json('Email already exists in Specialist.');
+            }
+
             const hashedPassword = await bcrypt.hash(password, 12)
             const operator = new Operator({email, password: hashedPassword, first_name, second_name, phone_number })
 
@@ -188,7 +251,17 @@ router.post(
 
             const candidate = await Specialist.findOne({email})
             if (candidate) {
-                return res.status(400).json('specialist with this email already exists.')
+                return res.status(400).json('Specialist with this email already exists.')
+            }
+
+            // Additional checks
+            const clientCandidate = await Client.findOne({ email });
+            if (clientCandidate) {
+                return res.status(400).json('Email already exists in Client.');
+            }
+            const operatorCandidate = await Operator.findOne({ email });
+            if (operatorCandidate) {
+                return res.status(400).json('Email already exists in Operator.');
             }
 
             const hashedPassword = await bcrypt.hash(password, 12)
