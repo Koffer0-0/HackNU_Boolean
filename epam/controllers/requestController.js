@@ -1,5 +1,4 @@
 import {Request} from '../models/Request.js';
-import {Operator} from "../models/Operator.js";
 
 export async function getAllRequests(req, res) {
     try {
@@ -13,7 +12,7 @@ export async function getAllRequests(req, res) {
 export async function getRequestById(req, res) {
     try {
         const requestId = req.params;
-        const request = await Operator.findById(requestId);
+        const request = await Request.findById(requestId);
         res.status(200).json({ data: request});
     } catch (e) {
         console.error(e);
