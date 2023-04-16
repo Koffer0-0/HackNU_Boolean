@@ -21,4 +21,4 @@ router.get('/operator/:operatorId/active', getAllActiveOperatorRequests);
 router.post('/create', createRequest);
 router.post('/assign/:requestId', assignRequestToOperator);
 
-export const requestRoutes = routerS
+export const requestRoutes = router
