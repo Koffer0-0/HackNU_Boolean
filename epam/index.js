@@ -1,15 +1,14 @@
-import express from 'express'
+import express, * as bodyParser from 'express'
 import config from 'config'
 import cors from 'cors'
-import {clientRoutes} from './routes/client.routes.js'
-import {groupRoutes} from './routes/group.routes.js'
-import {authRouter} from './routes/auth.routes.js'
-import {operatorRoutes} from './routes/operator.routes.js'
-import {specialistRoutes} from './routes/specialist.routes.js'
-import {dataRouter} from './routes/data.routes.js'
-import {requestRoutes} from './routes/request.routes.js';
-import * as bodyParser from "express";
 import mongoose from "mongoose";
+import {requestRoutes} from "./routes/request.routes.js";
+import {clientRoutes} from "./routes/client.routes.js";
+import {groupRoutes} from "./routes/group.routes.js";
+import {specialistRoutes} from "./routes/specialist.routes.js";
+import {operatorRoutes} from "./routes/operator.routes.js";
+import {authRouter} from "./routes/auth.routes.js";
+import {dataRouter} from "./routes/data.routes.js";
 
 const app = express()
 app.use(cors())

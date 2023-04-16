@@ -33,7 +33,6 @@ router.post(
             const {email, password, company_address, phone_number, company_name} = req.body
 
             const candidate = await Client.findOne({email})
-            console.log({candidate})
             if (candidate) {
                 return res.status(400).json('Client with this email already exists.')
             }
@@ -112,7 +111,6 @@ router.post(
             const {email, password, first_name, second_name, phone_number, } = req.body
 
             const candidate = await Operator.findOne({email})
-            console.log({candidate})
             if (candidate) {
                 return res.status(400).json('Operator with this email already exists.')
             }
@@ -189,7 +187,6 @@ router.post(
             const {email, password} = req.body
 
             const candidate = await Specialist.findOne({email})
-            console.log({candidate})
             if (candidate) {
                 return res.status(400).json('specialist with this email already exists.')
             }

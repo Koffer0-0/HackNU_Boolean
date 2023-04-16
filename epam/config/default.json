@@ -1,5 +1,5 @@
 {
     "port": 5000,
     "jwtSecret": "gj",
-    "mongoUri": "mongodb+srv://timastar00:Ita9O1bLYx2LXpmt@cluster0.tpsdfql.mongodb.net/test"
+    "mongoUri": "mongodb+srv://timastar00:hUHiD4gQVC4IrtgU@cluster0.a9fjhhc.mongodb.net/test"
 }
