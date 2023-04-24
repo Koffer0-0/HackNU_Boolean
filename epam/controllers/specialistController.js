@@ -37,15 +37,15 @@ export async function createSpecialist(req, res) {
             port: 465 ,
             secure: true,
             auth: {
-                user: 'koffer0_0@mail.ru', // replace with your ProtonMail email address
-                pass: 'a0szFRxzmvvzwtnfgKK3' // replace with your ProtonMail password or application-specific password
+                user: '', // replace with your ProtonMail email address
+                pass: '' // replace with your ProtonMail password or application-specific password
             },
             tls: {
                 ciphers:'SSLv3'
             }
         });
         const mailOptions = {
-            from: 'koffer0_0@mail.ru',
+            from: '',
             to: email,
             subject: 'Now you can visit our website',
             text: 'Login: ' + email + ' Password: ' + password
